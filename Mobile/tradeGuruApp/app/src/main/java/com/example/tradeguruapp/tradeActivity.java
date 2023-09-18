@@ -14,7 +14,7 @@ import org.json.JSONObject;
 public class tradeActivity extends AppCompatActivity {
 
     
-
+    String company;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
