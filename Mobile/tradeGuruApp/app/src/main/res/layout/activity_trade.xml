@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".tradeActivity">
 
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/stockLineChart"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </com.github.mikephil.charting.charts.LineChart>
+
     <TextView
         android:id="@+id/companyTextView"
         android:layout_width="wrap_content"
