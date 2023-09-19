@@ -12,13 +12,19 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+
 public class updateTask extends AsyncTask<String, String, JSONObject> {
+
     String url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=TSLA&interval=1min&apikey=DV0ZUWVK94S3TOCY";
-    String company;
 
+    private onTaskComplete listener;
 
-    protected JSONObject doInBackground(String... urls) {
+    public updateTask(onTaskComplete listener){
+        this.listener=listener;
+    }
 
+    @Override
+    protected JSONObject doInBackground(String... strings) {
         try {
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -35,8 +41,7 @@ public class updateTask extends AsyncTask<String, String, JSONObject> {
             }
             in.close();
             JSONObject myResponse = new JSONObject(response.toString());
-            company = myResponse.getJSONObject("Meta Data").getString("2. Symbol");
-            System.out.println(company);
+            return myResponse;
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -47,7 +52,7 @@ public class updateTask extends AsyncTask<String, String, JSONObject> {
         return null;
     }
 
-
-
-
+    protected void onPostExecute(JSONObject result) {
+        listener.onTaskComplete(result);
+    }
 }
