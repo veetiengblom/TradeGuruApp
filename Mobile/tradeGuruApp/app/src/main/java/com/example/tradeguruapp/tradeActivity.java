@@ -88,6 +88,7 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
 
         Description description = new Description();
         description.setText("");
+        stockLineChart.setNoDataText("Loading... Or Maybe No Data Found?");
         stockLineChart.setDescription(description);
         stockLineChart.setDrawGridBackground(true);
         stockLineChart.setDrawBorders(true);
