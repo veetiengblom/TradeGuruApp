@@ -15,8 +15,6 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     LocalDateTime lastRefreshed;
     String date;
-    String newDate;
-    String test;
     ArrayList<String> prices = new ArrayList<String>();
 
     @Override
