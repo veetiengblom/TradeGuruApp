@@ -1,7 +1,11 @@
 package com.example.tradeguruapp;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -16,9 +20,13 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,10 +36,16 @@ import java.util.ArrayList;
 public class tradeActivity extends AppCompatActivity implements onTaskComplete {
 
     TextView companyTextView;
+    TextView moneyTextView;
+    Button buyBtn;
+    Button shortBtn;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     LocalDateTime lastRefreshed;
-    String date;
+    String price;
     String time;
+    Float buyPrice;
+    Float shortPrice;
+    String playerMoney;
     ArrayList<Float> prices = new ArrayList<>();
     ArrayList<Float> times = new ArrayList<>();
     LineChart stockLineChart;
@@ -42,13 +56,61 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trade);
+
         companyTextView = (TextView) findViewById(R.id.companyTextView);
+        moneyTextView = (TextView) findViewById(R.id.moneyTextView);
         stockLineChart = (LineChart) findViewById(R.id.stockLineChart);
-        new updateTask(this).execute();
+        buyBtn = (Button) findViewById(R.id.buyBtn);
+        shortBtn = (Button) findViewById(R.id.shortBtn);
+        new updateTask(this, this).execute();
+        /*
+        try {
+            playerMoney = getMoneyAmount();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+         */
+
+        System.out.println("player money: " + playerMoney);
+        moneyTextView.setText(playerMoney);
+
+
+        //Timer timer = new Timer();
+        //timer.schedule(new quora(), 0, 60000);
+
+        buyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buyPrice = prices.get(0);
+                Toast.makeText(tradeActivity.this, "Bought TSLA stock at price: " + buyPrice, Toast.LENGTH_LONG).show();
+
+
+            }
+        });
+
+        shortBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shortPrice = prices.get(0);
+                Toast.makeText(tradeActivity.this, "Shorted TSLA stock at price: " + shortPrice, Toast.LENGTH_LONG).show();
+
+            }
+        });
     }
+    /*
+    class quora extends TimerTask {
+        public void run() {
+            new updateTask(tradeActivity.this).execute();
+        }
+    }
+     */
 
     @Override
-    public void onTaskComplete(JSONObject output) {
+    public void onTaskComplete (JSONObject output){
+        /*
+        prices.clear();
+        times.clear();
 
         try {
             companyTextView.setText(output.getJSONObject("Meta Data").getString("2. Symbol"));
@@ -67,6 +129,9 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+         */
+        readFromFile();
         LineDataSet lineDataSet = new LineDataSet(dataValues(), "");
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(lineDataSet);
@@ -96,7 +161,7 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
         stockLineChart.invalidate();
     }
 
-    private ArrayList<Entry> dataValues() {
+    private ArrayList<Entry> dataValues () {
         ArrayList<Entry> dataVals = new ArrayList<Entry>();
         dataVals.add(new Entry(times.get(9), prices.get(9)));
         dataVals.add(new Entry(times.get(8), prices.get(8)));
@@ -119,6 +184,37 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
             return "" + df.format(value);
         }
     }
-    
+    private String getMoneyAmount() throws IOException {
+        String money;
+        InputStream is = getAssets().open("com/example/tradeguruapp/assets/money.txt");
+        int size = is.available();
+        byte[] buffer = new byte[size];
+        is.read(buffer);
+        is.close();
+        money = new String(buffer);
+        System.out.println("Money?? " + money);
+        return money;
+    }
 
+    private void readFromFile() {
+        
+        try (BufferedReader br = new BufferedReader(new FileReader("stockData.txt"))) {
+            String line;
+            line = br.readLine();
+            if (line != null) {
+                companyTextView.setText(line);
+            }
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(";");
+                time = parts[0];
+                price = parts[1];
+                times.add(Float.parseFloat(time));
+                prices.add(Float.parseFloat(price));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

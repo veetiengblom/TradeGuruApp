@@ -1,26 +1,46 @@
 package com.example.tradeguruapp;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Environment;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 public class updateTask extends AsyncTask<String, String, JSONObject> {
 
     String url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=TSLA&interval=1min&apikey=DV0ZUWVK94S3TOCY";
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    LocalDateTime lastRefreshed;
+    String date;
+    String time;
+    String price;
+    String timePrice;
+    String company;
+    String fileName;
 
     private onTaskComplete listener;
+    private Context context;
 
-    public updateTask(onTaskComplete listener){
+    public updateTask(onTaskComplete listener, Context context){
         this.listener=listener;
+        this.context = context;
     }
 
     @Override
@@ -41,7 +61,28 @@ public class updateTask extends AsyncTask<String, String, JSONObject> {
             }
             in.close();
             JSONObject myResponse = new JSONObject(response.toString());
-            return myResponse;
+
+            date = myResponse.getJSONObject("Meta Data").getString("3. Last Refreshed");
+            lastRefreshed = LocalDateTime.parse(date, formatter);
+
+            company = myResponse.getJSONObject("Meta Data").getString("2. Symbol");
+            fileName = "stockData.txt";
+            File path = context.getApplicationContext().getFilesDir();
+            FileOutputStream writer = new FileOutputStream(new File(path, fileName));
+            writer.write(company.getBytes());
+            for (int i = 0; i < 20; i++) {
+                time = date.substring(11, 16);
+                time = time.replace(":", ".");
+                price = myResponse.getJSONObject("Time Series (1min)").getJSONObject(date).getString("4. close");
+                timePrice = time + ";" + price;
+                writer.write(timePrice.getBytes());
+                lastRefreshed = lastRefreshed.minusMinutes(1);
+                date = lastRefreshed.toString();
+                date = date + ":00";
+                date = date.replace("T", " ");
+            }
+            writer.close();
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
