@@ -1,5 +1,6 @@
 package com.example.tradeguruapp;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,11 +21,10 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
@@ -36,21 +36,28 @@ import java.util.ArrayList;
 public class tradeActivity extends AppCompatActivity implements onTaskComplete {
 
     TextView companyTextView;
+    TextView countdownTextView;
     TextView moneyTextView;
     Button buyBtn;
     Button shortBtn;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     LocalDateTime lastRefreshed;
-    String price;
+    String date;
     String time;
     Float buyPrice;
     Float shortPrice;
-    String playerMoney;
+    Float priceDifference;
+    private double userMoney = 1000.0;
     ArrayList<Float> prices = new ArrayList<>();
     ArrayList<Float> times = new ArrayList<>();
+    ArrayList<Entry> dataVals = new ArrayList<Entry>();
     LineChart stockLineChart;
     DecimalFormat df = new DecimalFormat("0.00");
-    
+    Integer adder;
+
+    private CountdownHandler countdownHandler;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,57 +65,71 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
         setContentView(R.layout.activity_trade);
 
         companyTextView = (TextView) findViewById(R.id.companyTextView);
+        countdownTextView = (TextView) findViewById(R.id.countdownTextView);
         moneyTextView = (TextView) findViewById(R.id.moneyTextView);
         stockLineChart = (LineChart) findViewById(R.id.stockLineChart);
         buyBtn = (Button) findViewById(R.id.buyBtn);
         shortBtn = (Button) findViewById(R.id.shortBtn);
+        countdownHandler = new CountdownHandler(this);
         new updateTask(this, this).execute();
-        /*
-        try {
-            playerMoney = getMoneyAmount();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-         */
+        SharedPreferences preferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        userMoney = preferences.getFloat("money", 1000.0f);
 
-        System.out.println("player money: " + playerMoney);
-        moneyTextView.setText(playerMoney);
-
-
-        //Timer timer = new Timer();
-        //timer.schedule(new quora(), 0, 60000);
+        updateMoneyTextView();
 
         buyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buyPrice = prices.get(0);
+                countdownHandler.cancelCountdown();
+                buyPrice = addDataValue(adder);
+                priceDifference = buyPrice - prices.get(adder);
+                userMoney += priceDifference;
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putFloat("money", (float) userMoney);
+                editor.apply();
+                
                 Toast.makeText(tradeActivity.this, "Bought TSLA stock at price: " + buyPrice, Toast.LENGTH_LONG).show();
-
-
+                countdownHandler.startCountdown(new CountdownHandler.Callback() {
+                    @Override
+                    public void onCountdownFinished() {
+                        countdownTextView.setText("Your profit/loss $: " + priceDifference);
+                        updateChart(dataVals);
+                        adder = adder - 1;
+                        updateMoneyTextView();
+                    }
+                });
             }
         });
 
         shortBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shortPrice = prices.get(0);
-                Toast.makeText(tradeActivity.this, "Shorted TSLA stock at price: " + shortPrice, Toast.LENGTH_LONG).show();
+                countdownHandler.cancelCountdown();
+                shortPrice = addDataValue(adder);
+                priceDifference = shortPrice - prices.get(adder);
+                userMoney += priceDifference;
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putFloat("money", (float) userMoney);
+                editor.apply();
 
+                Toast.makeText(tradeActivity.this, "Shorted TSLA stock at price: " + shortPrice, Toast.LENGTH_LONG).show();
+                countdownHandler.startCountdown(new CountdownHandler.Callback() {
+                    @Override
+                    public void onCountdownFinished() {
+                        countdownTextView.setText("Your profit/loss $: " + priceDifference);
+                        updateChart(dataVals);
+                        adder = adder - 1;
+                        updateMoneyTextView();
+                    }
+                });
             }
         });
     }
-    /*
-    class quora extends TimerTask {
-        public void run() {
-            new updateTask(tradeActivity.this).execute();
-        }
-    }
-     */
 
     @Override
-    public void onTaskComplete (JSONObject output){
-        /*
+    public void onTaskComplete(JSONObject output) {
+
         prices.clear();
         times.clear();
 
@@ -116,7 +137,8 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
             companyTextView.setText(output.getJSONObject("Meta Data").getString("2. Symbol"));
             date = output.getJSONObject("Meta Data").getString("3. Last Refreshed");
             lastRefreshed = LocalDateTime.parse(date, formatter);
-            for (int i = 0; i < 10; i++) {
+            JSONArray keys = output.getJSONObject("Time Series (1min)").names();
+            for (int i = 0; i <= keys.length(); i++) {
                 time = date.substring(11, 16);
                 time = time.replace(":", ".");
                 times.add(Float.parseFloat(time));
@@ -129,9 +151,8 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        adder = times.size() - 11;
 
-         */
-        readFromFile();
         LineDataSet lineDataSet = new LineDataSet(dataValues(), "");
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(lineDataSet);
@@ -161,19 +182,37 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
         stockLineChart.invalidate();
     }
 
-    private ArrayList<Entry> dataValues () {
-        ArrayList<Entry> dataVals = new ArrayList<Entry>();
-        dataVals.add(new Entry(times.get(9), prices.get(9)));
-        dataVals.add(new Entry(times.get(8), prices.get(8)));
-        dataVals.add(new Entry(times.get(7), prices.get(7)));
-        dataVals.add(new Entry(times.get(6), prices.get(6)));
-        dataVals.add(new Entry(times.get(5), prices.get(5)));
-        dataVals.add(new Entry(times.get(4), prices.get(4)));
-        dataVals.add(new Entry(times.get(3), prices.get(3)));
-        dataVals.add(new Entry(times.get(2), prices.get(2)));
-        dataVals.add(new Entry(times.get(1), prices.get(1)));
-        dataVals.add(new Entry(times.get(0), prices.get(0)));
+
+
+    private ArrayList<Entry> dataValues() {
+        Integer index = times.size() - 2;
+        for (int i = 0; i < 9; i++) {
+            dataVals.add(new Entry(times.get(index), prices.get(index)));
+            index = index - 1;
+        }
         return dataVals;
+    }
+
+    private Float addDataValue(int i) {
+        if (times.get(i) != null) {
+            dataVals.add(new Entry(times.get(i), prices.get(i)));
+            dataVals.remove(0);
+            return prices.get(i + 1);
+        } else {
+            Toast.makeText(tradeActivity.this, "Stock market has closed", Toast.LENGTH_LONG).show();
+        } return null;
+    }
+
+    private void updateChart(ArrayList<Entry> dataVals) {
+        LineDataSet lineDataSet = new LineDataSet(dataVals, "");
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+        dataSets.add(lineDataSet);
+        LineData data = new LineData(dataSets);
+        lineDataSet.setLineWidth(4);
+        lineDataSet.setValueTextSize(10);
+        lineDataSet.setDrawValues(true);
+        stockLineChart.setData(data);
+        stockLineChart.invalidate();
     }
 
     private class myXAxisValueFormatter implements IAxisValueFormatter {
@@ -184,37 +223,8 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
             return "" + df.format(value);
         }
     }
-    private String getMoneyAmount() throws IOException {
-        String money;
-        InputStream is = getAssets().open("com/example/tradeguruapp/assets/money.txt");
-        int size = is.available();
-        byte[] buffer = new byte[size];
-        is.read(buffer);
-        is.close();
-        money = new String(buffer);
-        System.out.println("Money?? " + money);
-        return money;
-    }
 
-    private void readFromFile() {
-        
-        try (BufferedReader br = new BufferedReader(new FileReader("stockData.txt"))) {
-            String line;
-            line = br.readLine();
-            if (line != null) {
-                companyTextView.setText(line);
-            }
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(";");
-                time = parts[0];
-                price = parts[1];
-                times.add(Float.parseFloat(time));
-                prices.add(Float.parseFloat(price));
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void updateMoneyTextView() {
+            moneyTextView.setText("Money: $" + String.format("%.2f", userMoney));
     }
 }

@@ -61,7 +61,7 @@ public class updateTask extends AsyncTask<String, String, JSONObject> {
             }
             in.close();
             JSONObject myResponse = new JSONObject(response.toString());
-
+            /*
             date = myResponse.getJSONObject("Meta Data").getString("3. Last Refreshed");
             lastRefreshed = LocalDateTime.parse(date, formatter);
 
@@ -83,6 +83,8 @@ public class updateTask extends AsyncTask<String, String, JSONObject> {
             }
             writer.close();
 
+             */
+            return myResponse;
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
