@@ -1,6 +1,9 @@
 package com.example.tradeguruapp;
 
+import android.content.ContentValues;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -24,14 +27,15 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-
 
 public class tradeActivity extends AppCompatActivity implements onTaskComplete {
 
@@ -46,6 +50,7 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
     String time;
     Float buyPrice;
     Float shortPrice;
+    Float newPrice;
     Float priceDifference;
     private double userMoney = 1000.0;
     ArrayList<Float> prices = new ArrayList<>();
@@ -53,8 +58,11 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
     ArrayList<Entry> dataVals = new ArrayList<Entry>();
     LineChart stockLineChart;
     DecimalFormat df = new DecimalFormat("0.00");
+    DecimalFormat dfStock = new DecimalFormat("0.000");
     Integer adder;
-
+    
+    private tradeDatabaseHelper dbHelper;
+    private SQLiteDatabase database;
     private CountdownHandler countdownHandler;
 
 
@@ -78,22 +86,32 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
 
         updateMoneyTextView();
 
+        dbHelper = new tradeDatabaseHelper(this);
+        database = dbHelper.getWritableDatabase();
+
         buyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 countdownHandler.cancelCountdown();
                 buyPrice = addDataValue(adder);
-                priceDifference = buyPrice - prices.get(adder);
+                newPrice = prices.get(adder);
+                priceDifference = newPrice - buyPrice;
+                System.out.println("New price:" + newPrice + "\n Old price: " + buyPrice);
                 userMoney += priceDifference;
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putFloat("money", (float) userMoney);
                 editor.apply();
+                insertTrade("Buy", companyTextView.getText().toString(), priceDifference, LocalDateTime.now());
                 
                 Toast.makeText(tradeActivity.this, "Bought TSLA stock at price: " + buyPrice, Toast.LENGTH_LONG).show();
                 countdownHandler.startCountdown(new CountdownHandler.Callback() {
                     @Override
                     public void onCountdownFinished() {
-                        countdownTextView.setText("Your profit/loss $: " + priceDifference);
+                        if (priceDifference < 0) {
+                            countdownTextView.setText("You lost $: " + dfStock.format(priceDifference));
+                        } else {
+                            countdownTextView.setText("You profited $: " + dfStock.format(priceDifference));
+                        }
                         updateChart(dataVals);
                         adder = adder - 1;
                         updateMoneyTextView();
@@ -107,17 +125,23 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
             public void onClick(View v) {
                 countdownHandler.cancelCountdown();
                 shortPrice = addDataValue(adder);
-                priceDifference = shortPrice - prices.get(adder);
+                newPrice = prices.get(adder);
+                priceDifference = shortPrice -newPrice;
                 userMoney += priceDifference;
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putFloat("money", (float) userMoney);
                 editor.apply();
+                insertTrade("Short", companyTextView.getText().toString(), priceDifference, LocalDateTime.now());
 
                 Toast.makeText(tradeActivity.this, "Shorted TSLA stock at price: " + shortPrice, Toast.LENGTH_LONG).show();
                 countdownHandler.startCountdown(new CountdownHandler.Callback() {
                     @Override
                     public void onCountdownFinished() {
-                        countdownTextView.setText("Your profit/loss $: " + priceDifference);
+                        if (priceDifference < 0) {
+                            countdownTextView.setText("You lost $: " + dfStock.format(priceDifference));
+                        } else {
+                            countdownTextView.setText("You profited $: " + dfStock.format(priceDifference));
+                        }
                         updateChart(dataVals);
                         adder = adder - 1;
                         updateMoneyTextView();
@@ -227,4 +251,21 @@ public class tradeActivity extends AppCompatActivity implements onTaskComplete {
     private void updateMoneyTextView() {
             moneyTextView.setText("Money: $" + String.format("%.2f", userMoney));
     }
+
+    private void insertTrade(String type, String companyName, float priceDifference, LocalDateTime timestamp) {
+        ContentValues values = new ContentValues();
+        values.put(tradeDatabaseHelper.COLUMN_TYPE, type);
+        values.put(tradeDatabaseHelper.COLUMN_COMPANY_NAME, companyName);
+        values.put(tradeDatabaseHelper.COLUMN_PRICE_DIFFERENCE, priceDifference);
+        values.put(tradeDatabaseHelper.COLUMN_TIMESTAMP, timestamp.toString());
+    
+        long newRowId = database.insert(tradeDatabaseHelper.TABLE_NAME, null, values);
+    
+        if (newRowId != -1) {
+            Toast.makeText(this, "Trade record inserted with ID: " + newRowId, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Error inserting trade record", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
