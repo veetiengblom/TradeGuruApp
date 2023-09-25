@@ -8,6 +8,9 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.37762451171874994" />
         <entry key="app/src/main/res/layout/activity_settings.xml" value="0.4244791666666667" />
         <entry key="app/src/main/res/layout/activity_trade.xml" value="0.4244791666666667" />
+        <entry key="app/src/main/res/layout/my_list_view_detail.xml" value="0.40989583333333335" />
+        <entry key="app/src/main/res/layout/my_listview_detail.xml" value="0.40989583333333335" />
+        <entry key="app/src/main/res/layout/trade_item.xml" value="0.38166351318359365" />
       </map>
     </option>
   </component>

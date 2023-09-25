@@ -3,7 +3,7 @@ package com.example.tradeguruapp;
 import java.time.LocalDateTime;
 
 public class trade {
-    private String type; // "Buy" or "Short"
+    private String type;
     private String companyName;
     private float price;
     private float priceDifference;
