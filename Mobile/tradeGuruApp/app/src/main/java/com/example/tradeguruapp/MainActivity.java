@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button tradeBtn = (Button) findViewById(R.id.tradeBtn);
         Button historyBtn = (Button) findViewById(R.id.historyBtn);
-        Button settingsBtn = (Button) findViewById(R.id.settingsBtn);
+        Button settingsBtn = (Button) findViewById(R.id.mentorBtn);
 
         tradeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
     public void openSettingsActivity(){
-        Intent intent = new Intent(this, settingsActivity.class);
+        Intent intent = new Intent(this, mentorActivity.class);
         startActivity(intent);
     }
 }

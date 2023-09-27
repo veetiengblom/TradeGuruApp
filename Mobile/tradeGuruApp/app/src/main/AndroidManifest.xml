@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TradeGuruApp">
         <activity
-            android:name=".settingsActivity"
+            android:name=".mentorActivity"
             android:exported="false" />
         <activity
             android:name=".historyActivity"

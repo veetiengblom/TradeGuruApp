@@ -3,10 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../../../../layout/custom_preview.xml" value="0.21770833333333334" />
         <entry key="../../../../layout/custom_preview.xml" value="0.4510416666666667" />
-        <entry key="app/src/main/res/layout/activity_history.xml" value="0.4244791666666667" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.37762451171874994" />
-        <entry key="app/src/main/res/layout/activity_settings.xml" value="0.4244791666666667" />
+        <entry key="app/src/main/res/layout/activity_history.xml" value="0.3111175537109375" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.4289187054301417" />
+        <entry key="app/src/main/res/layout/activity_mentor.xml" value="0.4244791666666667" />
+        <entry key="app/src/main/res/layout/activity_settings.xml" value="0.40029246012369796" />
         <entry key="app/src/main/res/layout/activity_trade.xml" value="0.4244791666666667" />
         <entry key="app/src/main/res/layout/my_list_view_detail.xml" value="0.40989583333333335" />
         <entry key="app/src/main/res/layout/my_listview_detail.xml" value="0.40989583333333335" />

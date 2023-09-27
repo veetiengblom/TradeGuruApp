@@ -7,23 +7,40 @@
     android:layout_height="match_parent"
     tools:context=".historyActivity">
 
-
-    <TextView
-        android:id="@+id/winPercentageTextView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textColor="@android:color/black"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="16dp"/>
+        android:layout_width="match_parent"
+        android:background="@color/secondary"
+        android:gravity="center"
+        tools:context=".historyActivity">
+        <TextView
+            android:id="@+id/winPercentageTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:padding="16dp"/>
+
+        <TextView
+            android:id="@+id/moneyMadeTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            />
+
+    </LinearLayout>
 
     <ListView
         android:id="@+id/tradeHistoryListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
+        android:background="@color/secondary"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"
         android:paddingTop="8dp"
@@ -34,4 +51,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/winPercentageTextView"
         app:layout_constraintVertical_bias="0.0" />
+
+
 </LinearLayout>
