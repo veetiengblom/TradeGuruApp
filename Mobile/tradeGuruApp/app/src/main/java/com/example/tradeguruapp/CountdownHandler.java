@@ -6,7 +6,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class CountdownHandler {
-    private tradeActivity tradeActivity;
+    private TradeActivity tradeActivity;
     private Button buyBtn;
     private Button shortBtn;
     private TextView countdownText;
@@ -14,7 +14,7 @@ public class CountdownHandler {
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable countdownRunnable;
 
-    public CountdownHandler(tradeActivity tradeActivity) {
+    public CountdownHandler(TradeActivity tradeActivity) {
         this.tradeActivity = tradeActivity;
         buyBtn = tradeActivity.findViewById(R.id.buyBtn);
         shortBtn = tradeActivity.findViewById(R.id.shortBtn);

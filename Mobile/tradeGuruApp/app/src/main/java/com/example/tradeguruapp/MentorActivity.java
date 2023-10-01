@@ -12,9 +12,9 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class mentorActivity extends AppCompatActivity {
+public class MentorActivity extends AppCompatActivity {
 
-    private String[] mentorNames = {"Bjrön Wahlroos", "Elon Musk", "Jordan Belfort", "WallStreetBet", "Warren Buffett"};
+    private String[] mentorNames = {"Bjrön Wahlroos", "Elon Musk", "Jordan Belfort", "WallStreetBets", "Warren Buffett"};
     private ImageView mentorImageView;
     private Spinner mentorSpinner;
     private Button selectBtn;
@@ -58,7 +58,7 @@ public class mentorActivity extends AppCompatActivity {
                 editor.putInt("mentor", (int) selectedPosition);
                 System.out.println("Selected mentor: " + selectedPosition);
                 editor.apply();
-                Toast.makeText(mentorActivity.this, "You chose " + mentorNames[selectedPosition] + " to be your mentor.", Toast.LENGTH_LONG).show();
+                Toast.makeText(MentorActivity.this, "You chose " + mentorNames[selectedPosition] + " to be your mentor.", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -70,8 +70,8 @@ public class mentorActivity extends AppCompatActivity {
             return R.drawable.elonmusk;
         } else if ("Jordan Belfort".equals(mentorName)) {
             return R.drawable.jordanbelfort;
-        } else if ("WallStreetBet".equals(mentorName)) {
-            return R.drawable.wallstreetbet;
+        } else if ("WallStreetBets".equals(mentorName)) {
+            return R.drawable.wallstreetbets;
         } else if ("Warren Buffett".equals(mentorName)) {
             return R.drawable.warrenbuffett;
         } else {

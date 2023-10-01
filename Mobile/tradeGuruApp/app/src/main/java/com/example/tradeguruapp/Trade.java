@@ -2,7 +2,7 @@ package com.example.tradeguruapp;
 
 import java.time.LocalDateTime;
 
-public class trade {
+public class Trade {
     private String type;
     private String companyName;
     private float price;
@@ -10,7 +10,7 @@ public class trade {
     private LocalDateTime timestamp;
 
     // Constructor
-    public trade(String type, String companyName, float priceDifference, LocalDateTime timestamp) {
+    public Trade(String type, String companyName, float priceDifference, LocalDateTime timestamp) {
         this.type = type;
         this.companyName = companyName;
         this.price = price;

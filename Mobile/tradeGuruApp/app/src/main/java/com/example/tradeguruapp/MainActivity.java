@@ -39,15 +39,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openTradeActivity(){
-        Intent intent = new Intent(this, tradeActivity.class);
+        Intent intent = new Intent(this, TradeActivity.class);
         startActivity(intent);
     }
     public void openHistoryActivity(){
-        Intent intent = new Intent(this, historyActivity.class);
+        Intent intent = new Intent(this, HistoryActivity.class);
         startActivity(intent);
     }
     public void openSettingsActivity(){
-        Intent intent = new Intent(this, mentorActivity.class);
+        Intent intent = new Intent(this, MentorActivity.class);
         startActivity(intent);
     }
 }

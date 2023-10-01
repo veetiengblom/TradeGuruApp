@@ -12,15 +12,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class tradeAdapter extends BaseAdapter {
+public class TradeAdapter extends BaseAdapter {
 
     private Context context;
-    private List<trade> tradeList;
+    private List<Trade> tradeList;
     private DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
     DecimalFormat moneyFormatter = new DecimalFormat("0.000");
 
 
-    public tradeAdapter(Context context, List<trade> tradeList) {
+    public TradeAdapter(Context context, List<Trade> tradeList) {
         this.context = context;
         this.tradeList = tradeList;
     }
@@ -46,7 +46,7 @@ public class tradeAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.trade_item, parent, false);
         }
 
-        trade tradeItem = tradeList.get(position);
+        Trade tradeItem = tradeList.get(position);
 
         TextView typeTextView = convertView.findViewById(R.id.typeTextView);
         TextView companyTextView = convertView.findViewById(R.id.companyTextView);

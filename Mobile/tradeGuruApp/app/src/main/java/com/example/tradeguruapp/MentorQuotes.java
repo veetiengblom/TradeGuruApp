@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class mentorQuotes {
-    private final List<String> bjornWahlroosQuotes;
-    private final List<String> elonMuskQuotes;
-    private final List<String> jordanBelfortQuotes;
-    private final List<String> wallStreetBetsQuotes;
-    private final List<String> warrenBuffettQuotes;
-    private final Random random;
+public class MentorQuotes {
+    private static List<String> bjornWahlroosQuotes;
+    private static List<String> elonMuskQuotes;
+    private static List<String> jordanBelfortQuotes;
+    private static List<String> wallStreetBetsQuotes;
+    private static List<String> warrenBuffettQuotes;
+    private static Random random;
 
-    public mentorQuotes() {
+    public MentorQuotes() {
         bjornWahlroosQuotes = new ArrayList<>();
         bjornWahlroosQuotes.add("Investing is about patience, not about quick gains.");
         bjornWahlroosQuotes.add("Diversify your portfolio, and you'll weather any storm.");
@@ -99,7 +99,7 @@ public class mentorQuotes {
         random = new Random();
     }
 
-    public String getRandomQuote(String mentor) {
+    public static String getRandomQuote(String mentor) {
         List<String> mentorQuotes = getMentorQuotes(mentor);
         if (mentorQuotes == null) {
             return "Mentor not found.";
@@ -108,7 +108,7 @@ public class mentorQuotes {
         return mentorQuotes.get(randomIndex);
     }
 
-    private List<String> getMentorQuotes(String mentor) {
+    private static List<String> getMentorQuotes(String mentor) {
         switch (mentor.toLowerCase()) {
             case "bjorn wahlroos":
                 return bjornWahlroosQuotes;

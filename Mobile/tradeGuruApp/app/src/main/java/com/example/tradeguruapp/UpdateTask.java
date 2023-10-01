@@ -2,28 +2,21 @@ package com.example.tradeguruapp;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 
-public class updateTask extends AsyncTask<String, String, JSONObject> {
+public class UpdateTask extends AsyncTask<String, String, JSONObject> {
 
     String url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=TSLA&interval=1min&apikey=DV0ZUWVK94S3TOCY";
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -35,10 +28,10 @@ public class updateTask extends AsyncTask<String, String, JSONObject> {
     String company;
     String fileName;
 
-    private onTaskComplete listener;
+    private OnTaskComplete listener;
     private Context context;
 
-    public updateTask(onTaskComplete listener, Context context){
+    public UpdateTask(OnTaskComplete listener, Context context){
         this.listener=listener;
         this.context = context;
     }

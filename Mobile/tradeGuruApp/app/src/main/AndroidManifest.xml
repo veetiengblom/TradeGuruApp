@@ -15,13 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TradeGuruApp">
         <activity
-            android:name=".mentorActivity"
+            android:name=".MentorActivity"
             android:exported="false" />
         <activity
-            android:name=".historyActivity"
+            android:name=".HistoryActivity"
             android:exported="false" />
         <activity
-            android:name=".tradeActivity"
+            android:name=".TradeActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

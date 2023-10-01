@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class tradeDatabaseHelper extends SQLiteOpenHelper {
+public class TradeDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "TradeHistory.db";
     private static final int DATABASE_VERSION = 1;
@@ -24,7 +24,7 @@ public class tradeDatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_PRICE_DIFFERENCE + " REAL, " +
                     COLUMN_TIMESTAMP + " TEXT);";
 
-    public tradeDatabaseHelper(Context context) {
+    public TradeDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

@@ -2,7 +2,7 @@ package com.example.tradeguruapp;
 
 import org.json.JSONObject;
 
-public interface onTaskComplete {
+public interface OnTaskComplete {
     void onTaskComplete(JSONObject output);
 
 }
