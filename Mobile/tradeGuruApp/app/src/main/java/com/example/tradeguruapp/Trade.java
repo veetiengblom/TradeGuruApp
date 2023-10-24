@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 public class Trade {
     private String type;
     private String companyName;
-    private float price;
     private float priceDifference;
     private LocalDateTime timestamp;
 
@@ -13,7 +12,6 @@ public class Trade {
     public Trade(String type, String companyName, float priceDifference, LocalDateTime timestamp) {
         this.type = type;
         this.companyName = companyName;
-        this.price = price;
         this.priceDifference = priceDifference;
         this.timestamp = timestamp;
     }
@@ -25,10 +23,6 @@ public class Trade {
 
     public String getCompanyName() {
         return companyName;
-    }
-
-    public float getPrice() {
-        return price;
     }
 
     public float getPriceDifference() {

@@ -110,7 +110,7 @@ public class MentorQuotes {
 
     private static List<String> getMentorQuotes(String mentor) {
         switch (mentor.toLowerCase()) {
-            case "bjorn wahlroos":
+            case "björn wahlroos":
                 return bjornWahlroosQuotes;
             case "elon musk":
                 return elonMuskQuotes;

@@ -15,27 +15,21 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-
 public class UpdateTask extends AsyncTask<String, String, JSONObject> {
 
+    // URL to fetch yesterdays stock data (TSLA in this case)
     String url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=TSLA&interval=1min&apikey=DV0ZUWVK94S3TOCY";
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    LocalDateTime lastRefreshed;
-    String date;
-    String time;
-    String price;
-    String timePrice;
-    String company;
-    String fileName;
 
-    private OnTaskComplete listener;
+    private OnTaskComplete listener; // Callback listener for task completion
     private Context context;
 
+    // Constructor to initialize the task with a listener and context
     public UpdateTask(OnTaskComplete listener, Context context){
-        this.listener=listener;
+        this.listener = listener;
         this.context = context;
     }
 
+    // Background task to fetch data from the provided URL
     @Override
     protected JSONObject doInBackground(String... strings) {
         try {
@@ -43,40 +37,21 @@ public class UpdateTask extends AsyncTask<String, String, JSONObject> {
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
             int responseCode = con.getResponseCode();
-            System.out.println("\n sending 'get' request to URL:" + url);
-            System.out.println("Response code:" + responseCode);
+            System.out.println("\nSending 'get' request to URL: " + url);
+            System.out.println("Response code: " + responseCode);
+
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
             String inputLine;
             StringBuffer response = new StringBuffer();
+
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
             in.close();
+
+            // Convert the response data (JSON) to a JSONObject
             JSONObject myResponse = new JSONObject(response.toString());
-            /*
-            date = myResponse.getJSONObject("Meta Data").getString("3. Last Refreshed");
-            lastRefreshed = LocalDateTime.parse(date, formatter);
-
-            company = myResponse.getJSONObject("Meta Data").getString("2. Symbol");
-            fileName = "stockData.txt";
-            File path = context.getApplicationContext().getFilesDir();
-            FileOutputStream writer = new FileOutputStream(new File(path, fileName));
-            writer.write(company.getBytes());
-            for (int i = 0; i < 20; i++) {
-                time = date.substring(11, 16);
-                time = time.replace(":", ".");
-                price = myResponse.getJSONObject("Time Series (1min)").getJSONObject(date).getString("4. close");
-                timePrice = time + ";" + price;
-                writer.write(timePrice.getBytes());
-                lastRefreshed = lastRefreshed.minusMinutes(1);
-                date = lastRefreshed.toString();
-                date = date + ":00";
-                date = date.replace("T", " ");
-            }
-            writer.close();
-
-             */
             return myResponse;
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -88,6 +63,7 @@ public class UpdateTask extends AsyncTask<String, String, JSONObject> {
         return null;
     }
 
+    // Method called after the background task is completed; it triggers the callback
     protected void onPostExecute(JSONObject result) {
         listener.onTaskComplete(result);
     }
