@@ -12,4 +12,4 @@ This project is a game based trade app where you can buy or short a stock.
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/your-username/your-repository.git
+git clone https://github.com/your-username/your-repository.git](https://github.com/veetiengblom/Mobile/tree/master/Mobile/tradeGuruApp)https://github.com/veetiengblom/Mobile/tree/master/Mobile/tradeGuruApp
