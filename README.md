@@ -16,3 +16,5 @@ git clone https://github.com/veetiengblom/Mobile.git
 ```
 
 ## Youtube link contains demo run of the application
+```bash
+https://youtube.com/shorts/y2vQ3H1jmzE?feature=share
